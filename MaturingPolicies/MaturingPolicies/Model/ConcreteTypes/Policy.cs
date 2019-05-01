@@ -7,6 +7,10 @@ namespace MaturingPolicies.Model.ConcreteTypes
 {
     public class Policy
     {
+        public Policy()
+        {
+
+        }
         public Policy(string policyDetails)
         {
             DataLoadHelper dataLoadHelper = new DataLoadHelper();

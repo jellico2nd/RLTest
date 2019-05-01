@@ -2,8 +2,10 @@
 using MaturingPolicies.Model.ConcreteTypes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace MaturingPolicies.Output
 {
@@ -17,9 +19,8 @@ namespace MaturingPolicies.Output
 
         private readonly List<Policy> myPolicies;
         private PolicyHelper myPolicyHelper;
-        private XmlDocument xml = new XmlDocument();
 
-        public void CreateOutputFile()
+        public void CreateOutputFile(XmlDocument xml)
         {
             XmlDeclaration xmlDeclaration = xml.CreateXmlDeclaration("1.0", "UTF-8", null);
             XmlElement root = xml.DocumentElement;
@@ -42,6 +43,14 @@ namespace MaturingPolicies.Output
             }
 
             xml.Save(@"E:\MaturedPolices.xml");
+        }
+
+        public void CreateOutputFile(XmlSerializer xmlSerializer)
+        {
+            Stream fs = new FileStream(@"E:\MaturedPolices.xml", FileMode.Create);
+            XmlWriter writer = new XmlTextWriter(fs, Encoding.Unicode);
+            myPolicies.ForEach(policy => xmlSerializer.Serialize(writer, new PolicyDTO(policy)));
+            writer.Close();
         }
     }
 }

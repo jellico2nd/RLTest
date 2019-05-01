@@ -7,12 +7,16 @@ namespace MaturingPolicies.Helpers
 {
     public class PolicyHelper
     {
-        List<string> ValidTypes = new List<string> { "A", "B", "C" };
-        int[] mgmtFees = { 3, 5, 7 };
+        Dictionary<string, int> ValidTypesWithFees = new Dictionary<string, int>()
+        {
+            {"A", 3 },
+            {"B", 5 },
+            {"C", 7 }
+        };
 
         public bool ValidPolicyNumber(string policyNumber)
         {
-            if (ValidTypes.Contains(policyNumber.Substring(0, 1).ToUpper()))
+            if (ValidTypesWithFees.ContainsKey(policyNumber.Substring(0, 1).ToUpper()))
             {
                 return true;
             }
@@ -22,42 +26,21 @@ namespace MaturingPolicies.Helpers
         public void SetPolicyType(Policy policy)
         {
             var tempPolicyType = policy.PolicyNumber.Substring(0, 1).ToUpper();
+            int fee;
             if (policy.ValidPolicy)
             {
+                ValidTypesWithFees.TryGetValue(tempPolicyType, out fee);
+                policy.ManagementFee = fee;
                 switch (tempPolicyType)
                 {
                     case "A":
-                        policy.ManagementFee = mgmtFees[0];
-                        if(policy.PolicyStartDate < new DateTime(1990, 1, 1))
-                        {
-                            policy.EligableForBonus = true;
-                        }
-                        else
-                        {
-                            policy.EligableForBonus = false;
-                        }
+                        policy.EligableForBonus = policy.PolicyStartDate < new DateTime(1990, 1, 1);
                         break;
                     case "B":
-                        policy.ManagementFee = mgmtFees[1];
-                        if (policy.Membership)
-                        {
-                            policy.EligableForBonus = true;
-                        }
-                        else
-                        {
-                            policy.EligableForBonus = false;
-                        }
+                        policy.EligableForBonus = policy.Membership;
                         break;
                     case "C":
-                        policy.ManagementFee = mgmtFees[2];
-                        if (policy.PolicyStartDate <= new DateTime(1990, 1, 1) && policy.Membership)
-                        {
-                            policy.EligableForBonus = true;
-                        }
-                        else
-                        {
-                            policy.EligableForBonus = false;
-                        }
+                        policy.EligableForBonus = (policy.PolicyStartDate <= new DateTime(1990, 1, 1) && policy.Membership);
                         break;
                     default:
                         break;

@@ -4,6 +4,7 @@ using MaturingPolicies.Model.ConcreteTypes;
 using MaturingPolicies.Output;
 using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace MaturingPolicies
 {
@@ -28,7 +29,7 @@ namespace MaturingPolicies
             try
             {
                 var result = new OutputXMLFile(validPolicies, policyHelper);
-                result.CreateOutputFile();
+                result.CreateOutputFile(new XmlSerializer(typeof(PolicyDTO), new XmlRootAttribute("MaturedPolicies") { IsNullable = false }));
                 Console.WriteLine("Creating XML File Complete...");
             }
             catch (Exception e)
