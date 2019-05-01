@@ -22,6 +22,10 @@ namespace MaturingPolicies.Output
 
         public void CreateOutputFile(XmlDocument xml)
         {
+            if(xml == null)
+            {
+                throw new ArgumentNullException("XmlDocument cannot be null");
+            }
             XmlDeclaration xmlDeclaration = xml.CreateXmlDeclaration("1.0", "UTF-8", null);
             XmlElement root = xml.DocumentElement;
             xml.InsertBefore(xmlDeclaration, root);
@@ -37,7 +41,7 @@ namespace MaturingPolicies.Output
                 policyElement.AppendChild(policyNumberElement);
 
                 XmlElement maturityValue = xml.CreateElement(string.Empty, "maturityvalue", string.Empty);
-                XmlText valueText = xml.CreateTextNode(myPolicyHelper.MaturityValue(policy).ToString());
+                XmlText valueText = xml.CreateTextNode(myPolicyHelper.MaturityValue(policy).PolicyValue);
                 maturityValue.AppendChild(valueText);
                 policyElement.AppendChild(maturityValue);
             }
@@ -47,9 +51,11 @@ namespace MaturingPolicies.Output
 
         public void CreateOutputFile(XmlSerializer xmlSerializer)
         {
+            List<PolicyDTO> OutputList = new List<PolicyDTO>();
             Stream fs = new FileStream(@"E:\MaturedPolices.xml", FileMode.Create);
             XmlWriter writer = new XmlTextWriter(fs, Encoding.Unicode);
-            myPolicies.ForEach(policy => xmlSerializer.Serialize(writer, new PolicyDTO(policy)));
+            myPolicies.ForEach(policy => OutputList.Add(myPolicyHelper.MaturityValue(policy)));
+            xmlSerializer.Serialize(writer, OutputList);
             writer.Close();
         }
     }

@@ -48,8 +48,11 @@ namespace MaturingPolicies.Helpers
             }
         }
 
-        public decimal MaturityValue(Policy policy)
+        public PolicyDTO MaturityValue(Policy policy)
         {
+            PolicyDTO result = new PolicyDTO();
+            result.PolicyNumber = policy.PolicyNumber;
+
             decimal uplift = 1 + (policy.UpliftPercentage / 100);
             int bonus = 0;
             if (policy.EligableForBonus)
@@ -57,7 +60,9 @@ namespace MaturingPolicies.Helpers
                 bonus = policy.DiscretionaryBonus;
             }
             decimal mgmtFeeValue = ((decimal)policy.ManagementFee / 100);
-            var result = (policy.Premiums - (policy.Premiums * mgmtFeeValue) + bonus) * uplift;
+
+            result.PolicyValue = ((policy.Premiums - (policy.Premiums * mgmtFeeValue) + bonus) * uplift).ToString();
+
             return result;
         }
     }

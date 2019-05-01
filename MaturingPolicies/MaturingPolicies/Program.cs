@@ -24,21 +24,30 @@ namespace MaturingPolicies
             }
             catch (Exception e)
             {
-                Console.WriteLine(string.Format("An error at load has occured: {0}", e.Message));
+                PrintExceptionMessage(e);
             }
             try
             {
                 var result = new OutputXMLFile(validPolicies, policyHelper);
-                result.CreateOutputFile(new XmlSerializer(typeof(PolicyDTO), new XmlRootAttribute("MaturedPolicies") { IsNullable = false }));
+                result.CreateOutputFile(new XmlSerializer(typeof(List<PolicyDTO>), new XmlRootAttribute("MaturedPolicies") { IsNullable = false }));
                 Console.WriteLine("Creating XML File Complete...");
             }
             catch (Exception e)
             {
-                Console.WriteLine(string.Format("An error at load has occured: {0}", e.Message));
+                PrintExceptionMessage(e);
             }
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
+        }
+
+        private static void PrintExceptionMessage(Exception e)
+        {
+            Console.WriteLine(string.Format("An error at load has occured: {0}", e.Message));
+            if (e.InnerException != null)
+            {
+                Console.WriteLine(string.Format("InnerException: {0}", e.InnerException.Message));
+            }
         }
     }
 }
